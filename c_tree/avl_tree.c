@@ -141,7 +141,6 @@ avl_node_t* delete_node(avl_node_t* node, int key)
             node->value = temp->value;
             node->right = delete_node(node->right, temp->key);
         }
-        printf("Deleted node with key=%d\n", key);
     }
 
     /*No nodes left*/
@@ -293,6 +292,5 @@ void clear_tree(avl_node_t* node)
         return;
     clear_tree(node->left);
     clear_tree(node->right);
-    printf("Deleting node with key=%d\n",node->key);
     free(node);
 }
