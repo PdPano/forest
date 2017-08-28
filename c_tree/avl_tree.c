@@ -141,6 +141,7 @@ avl_node_t* delete_node(avl_node_t* node, int key)
             node->value = temp->value;
             node->right = delete_node(node->right, temp->key);
         }
+        printf("Deleted node with key=%d\n", key);
     }
 
     /*No nodes left*/
@@ -232,6 +233,8 @@ avl_node_t* find_node(avl_node_t* node, int key)
             ret_node = find_node(node->left, key);
         else if( key > node->key)
             ret_node = find_node(node->right, key);
+        else
+            ret_node = node;
     }
     return ret_node;
 }
@@ -270,6 +273,18 @@ void print_inorder(avl_node_t* node)
     }
     printf("\n\n");
     print_inorder(node->right);
+}
+
+void print_node(avl_node_t* node)
+{
+    if(node==NULL)
+    {
+        printf("Node = NULL\n");
+    }
+    else
+    {
+        printf("Node key: %d\t value: %d\n",node->key,node->value);
+    }
 }
 
 void clear_tree(avl_node_t* node)

@@ -24,5 +24,6 @@ avl_node_t* right_rotate(avl_node_t* node);
 avl_node_t* find_node(avl_node_t* node, int key);
 avl_node_t* find_min_key(avl_node_t* node);
 void print_inorder(avl_node_t* node);
+void print_node(avl_node_t* node);
 void clear_tree(avl_node_t* node);
 #endif
