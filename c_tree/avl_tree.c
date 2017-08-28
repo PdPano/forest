@@ -98,6 +98,84 @@ avl_node_t* insert_node(avl_node_t *node, int key, int value)
     return node;
 }
 
+avl_node_t* delete_node(avl_node_t* node, int key)
+{
+    if(node==NULL)
+    {
+        printf("Nothing was deleted\n");
+        return node;
+    }
+    if(key < node->key)
+    {
+        node->left = delete_node(node->left, key);
+    }
+    else if(key > node->key)
+    {
+        node->right = delete_node(node->right, key);
+    }
+    else
+    {
+        if( (node->left==NULL) || (node->right==NULL) )
+        {
+            /*Selects the non null side if any*/
+            avl_node_t* temp = (node->left) ? node->left : node->right;
+            if(temp == NULL)
+            {
+                temp = node;
+                node = NULL;
+            }
+            else
+            {
+                *node = *temp;/*Copies value to parent*/
+            }
+            free(temp);
+        }
+        else
+        {
+            /*The substitute to node is its successor, i.e.
+             * the smallest value at the right subtree
+             */
+            avl_node_t* temp = find_min_key(node->right);
+            /*temp is definetly not NULL as node has two children*/
+            node->key = temp->key;
+            node->value = temp->value;
+            node->right = delete_node(node->right, temp->key);
+        }
+    }
+
+    /*No nodes left*/
+    if(node==NULL)
+        return node;
+
+    update_height(node);
+    int balance = get_balance(node);
+
+    /* Left left */
+    if(balance > 1 && get_balance(node->left) >= 0)
+    {
+        return right_rotate(node);
+    }
+    /*Left right*/
+    if(balance > 1 && get_balance(node->left) < 0)
+    {
+        node->left = left_rotate(node->left);
+        return right_rotate(node);
+    }
+    /* Right right*/
+    if(balance < -1 && get_balance(node->right) <= 0)
+    {
+        return left_rotate(node);
+    }
+    /* Right left*/
+    if(balance < -1 && get_balance(node->right) > 0)
+    {
+        node->right = right_rotate(node->right);
+        return left_rotate(node);
+    }
+
+    return node;
+}
+
 /*
  * ASCII art explanation of tree rotations
  *  left tree                 right tree
@@ -143,7 +221,7 @@ avl_node_t* right_rotate(avl_node_t* node)
 avl_node_t* find_node(avl_node_t* node, int key)
 {
     avl_node_t* ret_node;
-    if(node==NULL)
+    if(node == NULL)
     {
         printf("Key %d not found\n", key);
         ret_node=NULL;
@@ -156,4 +234,50 @@ avl_node_t* find_node(avl_node_t* node, int key)
             ret_node = find_node(node->right, key);
     }
     return ret_node;
+}
+
+avl_node_t* find_min_key(avl_node_t* node)
+{
+    avl_node_t* current = node;
+    while(current->left != NULL)
+        current = current->left;
+    return current;
+}
+
+void print_inorder(avl_node_t* node)
+{
+    if(node==NULL)
+        return;
+    print_inorder(node->left);
+    printf("key: %d\tvalue: %d\n",node->key,node->value);
+    printf("left key: ");
+    if(node->left==NULL)
+    {
+        printf("NULL ");
+    }
+    else
+    {
+        printf("%d ",node->left->key);
+    }
+    printf("right key: ");
+    if(node->right==NULL)
+    {
+        printf("NULL ");
+    }
+    else
+    {
+        printf("%d ",node->right->key);
+    }
+    printf("\n\n");
+    print_inorder(node->right);
+}
+
+void clear_tree(avl_node_t* node)
+{
+    if(node==NULL)
+        return;
+    clear_tree(node->left);
+    clear_tree(node->right);
+    printf("Deleting node with key=%d\n",node->key);
+    free(node);
 }
