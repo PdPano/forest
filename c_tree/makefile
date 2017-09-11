@@ -11,7 +11,7 @@ main: $(OBJECTS) makefile
 	$(CC) $(CFLAGS) $(OBJECTS) -o $(PROGRAM)
 
 %.o: %.c makefile
-	$(COMPILE.c) $(DEPFLAGS) -o $@ $<
+	$(COMPILE.c) -o $@ $<
 
 clean:
 	@rm -f $(OBJECTS) $(PROGRAM)
